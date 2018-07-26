@@ -8,7 +8,7 @@ var data = {
   browserFocus: true,
   activeState: "active",
   domains: {}
-}
+};
 
 //user alert settings
 var alert = {
@@ -26,7 +26,7 @@ getAlertSettings();
 function getDomainsFromStorage() {
   chrome.storage.sync.get(domainsStorageKey, function(result) {
       var domainsList = result[domainsStorageKey];
-      if(domainsList == undefined) return;
+      if(domainsList === undefined) return;
       for(var i = 0; i < domainsList.length; i++) {
         data.domains[domainsList[i]] = 0;
       }
@@ -39,7 +39,9 @@ function getDomainsFromStorage() {
 */
 function getAlertSettings() {
   chrome.storage.sync.get("alertOptions", function(result) {
-    if(result["alertOptions"] === undefined) return;
+
+    if(!result.hasOwnProperty("alertOptions")) return;
+
     alert.set = result["alertOptions"]["setAlerts"];
 
     if(alert.set) {
@@ -80,12 +82,12 @@ function updateTime() {
   if(data.totalTime >= 60 * 60 * 24) restartTimer();
 
   chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-    if(tabs.length == 0) return;
+    if(tabs.length === 0) return;
     data.totalTime++;
     let url = new URL(tabs[0].url);
     let hostname = url.hostname;
 
-    if(data.domains[hostname] !== undefined) {
+    if(data.domains.hasOwnProperty(hostname)) {
       data.domains[hostname]++;
       if(alert.set && alert.time !== 0 && data.domains[hostname] === alert.time) {
         var alertCode = "alert('You have spent " + Math.round((data.domains[hostname]/(data.totalTime)) * 100) + "% of your time on " + hostname + ". Get back to work!')";
@@ -110,7 +112,7 @@ function addWebsite(domain) {
   }
 
   chrome.storage.sync.get(domainsStorageKey, function(result) {
-      if(result[domainsStorageKey] != undefined) {
+      if(result.hasOwnProperty(domainsStorageKey)) {
           result[domainsStorageKey].push(domain);
       } else {
         result[domainsStorageKey] = [domain];
@@ -156,7 +158,7 @@ function saveData(callback) {
     var startTimeString = dataCopy.startTime.toString().substring(0, dataCopy.startTime.toString().indexOf("GMT"));
 
     chrome.storage.sync.get("timelyData", function(result) {
-        if(result["timelyData"] === undefined)
+        if(!result.hasOwnProperty("timelyData"))
             result["timelyData"] = {};
 
         result["timelyData"][startTimeString] = {totalTime: dataCopy.totalTime, domains: dataCopy.domains};

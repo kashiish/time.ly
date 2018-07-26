@@ -7,9 +7,9 @@ document.addEventListener("DOMContentLoaded", function() {
       checkbox.addEventListener("change", function(e) {
         if(e.target.parentElement.id === "save-data") {
           setSaveDataOption(e.target.checked);
-        } else if(e.target.parentElement.id == "delete-previous") {
+        } else if(e.target.parentElement.id === "delete-previous") {
           chrome.storage.sync.set({saveDataOption:{value: true, deletePrevious: e.target.checked}}, function() {});
-        } else if(e.target.parentElement.id == "restart-on-lock") {
+        } else if(e.target.parentElement.id === "restart-on-lock") {
           chrome.storage.sync.set({restartTimerOnLock: e.target.checked}, function() {});
         } else {
           setAlertOption(e.target.checked);
@@ -19,14 +19,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.getElementById("alert-settings").addEventListener("change", function() {
       document.getElementById("alert-settings").querySelector("button").style["color"] = "darkblue";
-      document.getElementById("alert-settings").querySelector("button").innerHTML = "Set Alerts";
+      document.getElementById("alert-settings").querySelector("button").textContent = "Set Alerts";
     });
 
     document.getElementById("alert-settings").addEventListener("submit", function(e) {
       e.preventDefault();
       setAlertTimingOptions();
       document.getElementById("alert-settings").querySelector("button").style["color"] = "green";
-      document.getElementById("alert-settings").querySelector("button").innerHTML = "Alert set!";
+      document.getElementById("alert-settings").querySelector("button").textContent = "Alert set!";
 
     });
 
@@ -105,7 +105,7 @@ function setOptionValues() {
 */
 function getSaveDataOption() {
   chrome.storage.sync.get("saveDataOption", function(result) {
-    if(result["saveDataOption"] === undefined) {
+    if(!result.hasOwnProperty("saveDataOption")) {
       result["saveDataOption"] = {value: true, deletePrevious: true};
       chrome.storage.sync.set(result, function(){});
     }
@@ -129,7 +129,7 @@ function getSaveDataOption() {
 */
 function getRestartTimerOption() {
   chrome.storage.sync.get("restartTimerOnLock", function(result) {
-    if(result["restartTimerOnLock"] === undefined) {
+    if(!result.hasOwnProperty("restartTimerOnLock")) {
       result["restartTimerOnLock"] = true;
       chrome.storage.sync.set(result, function(){});
     }
@@ -144,7 +144,7 @@ function getRestartTimerOption() {
 */
 function getAlertOptions() {
   chrome.storage.sync.get("alertOptions", function(result) {
-    if(result["alertOptions"] === undefined) {
+    if(!result.hasOwnProperty("alertOptions")) {
       result["alertOptions"] = {setAlerts: false, seconds: 0, minutes: 0, hours: 0};
       chrome.storage.sync.set(result, function(){});
     }

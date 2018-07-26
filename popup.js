@@ -23,12 +23,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
   chrome.runtime.getBackgroundPage(function(background) {
     setInterval(function() {
-        document.getElementById("total-timer").innerHTML = getTimeString(background.data.totalTime);
+      document.getElementById("total-timer").textContent = getTimeString(background.data.totalTime);
 
-        for(var domain in background.data.domains) {
-          document.getElementById(domain + "-timer").innerHTML = getTimeString(background.data.domains[domain]);
-          document.getElementById(domain + "-percentage").innerHTML = getPercentage(background.data.domains[domain], background.data.totalTime);
-        }
+      for(var domain in background.data.domains) {
+        document.getElementById(domain + "-timer").textContent = getTimeString(background.data.domains[domain]);
+        document.getElementById(domain + "-percentage").textContent = getPercentage(background.data.domains[domain], background.data.totalTime);
+      }
 
     }, 1000);
   });
@@ -38,8 +38,10 @@ document.addEventListener("DOMContentLoaded", function() {
 * Loads the list of websites and time information when popup is opened.
 */
 function loadDomains() {
-  if(Object.keys(background.data.domains).length > 0) {
-     document.getElementById("websites").innerHTML = "";
+  var websitesList = document.getElementById("websites");
+  var emptyListElement = websitesList.querySelector("li");
+  if(Object.keys(background.data.domains).length > 0 && emptyListElement !== null) {
+     websitesList.removeChild(emptyListElement);
   }
 
   for(var domain in background.data.domains) {
@@ -57,15 +59,15 @@ function switchPage(buttonValue) {
 
   var tabButton = document.getElementById("tab-button");
 
-  if(buttonValue == "options") {
+  if(buttonValue === "options") {
     document.getElementById("timely").style["display"] = "none";
     document.getElementById("options").style["display"] = "block";
-    tabButton.innerHTML = "time.ly";
+    tabButton.textContent = "time.ly";
     tabButton.style["color"] = "red";
   } else {
     document.getElementById("timely").style["display"] = "block";
     document.getElementById("options").style["display"] = "none";
-    tabButton.innerHTML = "options";
+    tabButton.textContent = "options";
     tabButton.style["color"] = "grey";
   }
 }
@@ -82,7 +84,11 @@ function addWebsite() {
     if(background.data.domains.hasOwnProperty(domain)) return;
 
     if(Object.keys(background.data.domains).length === 0) {
-      document.getElementById("websites").innerHTML = "";
+      var websitesList = document.getElementById("websites");
+      var emptyListElement = websitesList.querySelector("li");
+      if(emptyListElement !== null) {
+         websitesList.removeChild(emptyListElement);
+      }
     }
 
     background.addWebsite(domain);
@@ -99,9 +105,14 @@ function addWebsite() {
 */
 function deleteWebsite(domain) {
 
-  document.getElementById("websites").innerHTML = "";
+  var timelyDiv = document.getElementById("timely");
 
   background.deleteWebsite(domain);
+
+  var newList = document.createElement("ul");
+  newList.id = "websites";
+
+  timelyDiv.replaceChild(newList, document.getElementById("websites"));
 
   loadDomains();
 }
@@ -115,9 +126,9 @@ function addHTMLForWebsiteEntry(domain) {
   var htmlString = "<li class = 'website-entry'>" +
                   "<button class=delete-button id=" + domain + ">x</button>" +
                   "<div class = 'domain'>" + domain + "</div>" +
-                  "<div class = 'timer' id=" + domain + "-timer>" + getTimeString(background.data.domains[domain]) + "</div>" +
+                  "<div id=" + domain + "-timer>" + getTimeString(background.data.domains[domain]) + "</div>" +
                   "<div id=" + domain + "-percentage>" + getPercentage(background.data.domains[domain], background.data.totalTime) + "</div>"
-                  "</li>"
+                  "</li>";
 
   document.getElementById("websites").insertAdjacentHTML("beforeend", htmlString);
 
@@ -200,9 +211,7 @@ function createCSVString(timelyData) {
 * @return Object
 */
 function getAllDomainData(timelyData) {
-  var allDomainData = {}
-
-  console.log(timelyData);
+  var allDomainData = {};
 
   //add all domains seen in every timer to allDomainData
   for(var startTime in timelyData) {
