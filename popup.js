@@ -263,7 +263,7 @@ function getTimeString(numSeconds) {
 }
 
 function getPercentage(numSeconds, totalTime) {
-  return Math.round((numSeconds/(totalTime == 0 ? 1 : totalTime)) * 100) + "%";
+  return Math.round((numSeconds/(totalTime === 0 ? 1 : totalTime)) * 100) + "%";
 }
 
 /**

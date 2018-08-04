@@ -14,7 +14,7 @@ var data = {
 var alert = {
   set: false,
   time: 0
-}
+};
 
 getDomainsFromStorage();
 getAlertSettings();
@@ -185,14 +185,14 @@ chrome.idle.setDetectionInterval(30);
 
 chrome.idle.onStateChanged.addListener(function(newState) {
     chrome.storage.sync.get("restartTimerOnLock", function(result) {
-      if(result["restartTimerOnLock"] && newState == "locked") restartTimer();
+      if(result.hasOwnProperty("restartTimerOnLock") && newState === "locked") restartTimer();
       data.activeState = newState;
     });
 });
 
 
 chrome.windows.onFocusChanged.addListener(function(windowId) {
-    data.browserFocus = windowId != chrome.windows.WINDOW_ID_NONE;
+    data.browserFocus = windowId !== chrome.windows.WINDOW_ID_NONE;
 });
 
 setInterval(updateTime, 1000);
