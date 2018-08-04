@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Karla');
 
-
 body {
   width: 300px;
   overflow: scroll;
@@ -94,6 +93,11 @@ button {
   font-weight: 600;
   overflow: scroll;
 }
+
+::-webkit-scrollbar {
+	display:none;
+}
+
 
 .delete-button {
   visibility: hidden;
