@@ -185,7 +185,7 @@ chrome.idle.setDetectionInterval(30);
 
 chrome.idle.onStateChanged.addListener(function(newState) {
     chrome.storage.sync.get("restartTimerOnLock", function(result) {
-      if(result.hasOwnProperty("restartTimerOnLock") && newState === "locked") restartTimer();
+      if(result.hasOwnProperty("restartTimerOnLock") && result["restartTimerOnLock"] && newState === "locked") restartTimer();
       data.activeState = newState;
     });
 });
